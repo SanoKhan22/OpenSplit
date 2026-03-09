@@ -1,0 +1,113 @@
+{
+	"servers": {
+		"microsoft/playwright-mcp": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"@playwright/mcp@latest"
+			],
+			"gallery": "https://api.mcp.github.com",
+			"version": "0.0.1-seed"
+		},
+		"github/github-mcp-server": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@anthropic/github-mcp-server@latest"
+			],
+			"env": {
+				"GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_pat}"
+			}
+		},
+		"supabase/supabase-mcp": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@supabase/mcp-server-supabase@latest",
+				"--supabase-url",
+				"${input:supabase_url}",
+				"--supabase-service-role-key",
+				"${input:supabase_service_role_key}"
+			]
+		},
+		"redis-mcp": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@redis/mcp@latest",
+				"--url",
+				"${input:redis_url}"
+			]
+		},
+		"fetch-mcp": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@anthropic/mcp-fetch@latest"
+			]
+		},
+		"io.github.github/github-mcp-server": {
+			"type": "stdio",
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"-e",
+				"GITHUB_PERSONAL_ACCESS_TOKEN=${input:token}",
+				"ghcr.io/github/github-mcp-server:0.33.0"
+			],
+			"gallery": "https://api.mcp.github.com",
+			"version": "0.33.0"
+		},
+		"stitch": {
+			"url": "https://stitch.googleapis.com/mcp",
+			"type": "http",
+			"headers": {
+				"Accept": "application/json",
+				"X-Goog-Api-Key": "${input:google_stitch_api_key}"
+			}
+		}
+	},
+	"inputs": [
+		{
+			"id": "github_pat",
+			"description": "GitHub Personal Access Token (repo, read:org scopes)",
+			"type": "promptString",
+			"password": true
+		},
+		{
+			"id": "supabase_url",
+			"description": "Supabase Project URL (e.g. https://xxxx.supabase.co)",
+			"type": "promptString"
+		},
+		{
+			"id": "supabase_service_role_key",
+			"description": "Supabase Service Role Key (from Settings → API)",
+			"type": "promptString",
+			"password": true
+		},
+		{
+			"id": "redis_url",
+			"description": "Redis connection URL (e.g. redis://localhost:6379 or Redis Cloud URL)",
+			"type": "promptString",
+			"password": true
+		},
+		{
+			"id": "token",
+			"type": "promptString",
+			"description": "",
+			"password": true
+		},
+		{
+			"id": "google_stitch_api_key",
+			"description": "Google Stitch API Key",
+			"type": "promptString",
+			"password": true
+		}
+	]
+}

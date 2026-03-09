@@ -1,0 +1,103 @@
+import uuid
+from datetime import datetime, UTC
+
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.models.group import GroupModel, GroupMemberModel
+from app.models.user import UserModel
+from app.schemas.group import GroupCreateSchema, GroupUpdateSchema, GroupSchema, GroupMemberSchema
+
+
+class GroupService:
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def _get_or_404(self, group_id: uuid.UUID) -> GroupModel:
+        group = self.db.query(GroupModel).filter(
+            GroupModel.id == group_id,
+            GroupModel.deleted_at.is_(None),
+        ).first()
+        if not group:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        return group
+
+    def _assert_member(self, group_id: uuid.UUID, user: UserModel) -> GroupMemberModel:
+        member = self.db.query(GroupMemberModel).filter(
+            GroupMemberModel.group_id == group_id,
+            GroupMemberModel.user_id == user.id,
+            GroupMemberModel.deleted_at.is_(None),
+        ).first()
+        if not member:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not a group member")
+        return member
+
+    def create(self, payload: GroupCreateSchema, user: UserModel) -> GroupSchema:
+        group = GroupModel(
+            name=payload.name,
+            description=payload.description,
+            currency=payload.currency,
+            created_by_id=user.id,
+        )
+        self.db.add(group)
+        self.db.flush()
+
+        membership = GroupMemberModel(group_id=group.id, user_id=user.id, is_admin=True)
+        self.db.add(membership)
+        self.db.commit()
+        self.db.refresh(group)
+        return GroupSchema.model_validate(group)
+
+    def list_for_user(self, user: UserModel) -> list[GroupSchema]:
+        memberships = self.db.query(GroupMemberModel).filter(
+            GroupMemberModel.user_id == user.id,
+            GroupMemberModel.deleted_at.is_(None),
+        ).all()
+        group_ids = [m.group_id for m in memberships]
+        groups = self.db.query(GroupModel).filter(
+            GroupModel.id.in_(group_ids),
+            GroupModel.deleted_at.is_(None),
+        ).all()
+        return [GroupSchema.model_validate(g) for g in groups]
+
+    def get(self, group_id: uuid.UUID, user: UserModel) -> GroupSchema:
+        group = self._get_or_404(group_id)
+        self._assert_member(group_id, user)
+        return GroupSchema.model_validate(group)
+
+    def update(self, group_id: uuid.UUID, payload: GroupUpdateSchema, user: UserModel) -> GroupSchema:
+        group = self._get_or_404(group_id)
+        member = self._assert_member(group_id, user)
+        if not member.is_admin:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+        if payload.name is not None:
+            group.name = payload.name
+        if payload.description is not None:
+            group.description = payload.description
+        self.db.commit()
+        self.db.refresh(group)
+        return GroupSchema.model_validate(group)
+
+    def delete(self, group_id: uuid.UUID, user: UserModel) -> None:
+        group = self._get_or_404(group_id)
+        member = self._assert_member(group_id, user)
+        if not member.is_admin:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+        group.deleted_at = datetime.now(UTC)
+        self.db.commit()
+
+    def add_member(self, group_id: uuid.UUID, user_id: uuid.UUID, current_user: UserModel) -> GroupMemberSchema:
+        group = self._get_or_404(group_id)
+        self._assert_member(group_id, current_user)
+        existing = self.db.query(GroupMemberModel).filter(
+            GroupMemberModel.group_id == group_id,
+            GroupMemberModel.user_id == user_id,
+            GroupMemberModel.deleted_at.is_(None),
+        ).first()
+        if existing:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Already a member")
+        member = GroupMemberModel(group_id=group_id, user_id=user_id)
+        self.db.add(member)
+        self.db.commit()
+        self.db.refresh(member)
+        return GroupMemberSchema.model_validate(member)
