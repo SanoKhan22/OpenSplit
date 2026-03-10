@@ -80,9 +80,13 @@ export default function ExpensesPage() {
     if (!file) return;
     const form = new FormData();
     form.append("file", file);
-    const res = await fetch("/api/expenses/scan-receipt", {
+    
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+    const token = localStorage.getItem("os_access_token");
+    
+    const res = await fetch(`${BASE_URL}/api/expenses/scan-receipt`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${localStorage.getItem("os_access_token")}` },
+      headers: { Authorization: `Bearer ${token}` },
       body: form,
     });
     const json = await res.json();
