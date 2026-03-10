@@ -3,7 +3,13 @@
 ## Project Overview
 OpenSplit is a bill-splitting app. Backend: FastAPI + SQLAlchemy + PostgreSQL (Supabase). Frontend: Next.js 14 App Router + TypeScript + Tailwind. AI agents for receipt scanning and RAG-based expense retrieval.
 
-**📐 UI/UX Design System:** See [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) for complete design reference with all 20 Stitch screens, component specs, and frontend implementation guide.
+**📐 MASTER UI/UX DESIGN REFERENCE:** [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)
+- **ALWAYS consult this file for ALL frontend work** — it contains the complete design system
+- 20 Stitch UI screens with live screenshots and implementation notes
+- Brand colors: **Yellow `#FFD400`** (primary) + **Purple `#7c3bed`** (secondary)
+- Dark mode default, glassmorphism effects, mobile-first design
+- Component specs, color palette, typography, spacing, animations
+- Stitch Project ID: `projects/1695241361321249608`
 
 ---
 
@@ -89,7 +95,7 @@ formatCents(1250, "USD")  // "$12.50"
 - Mobile-first, 360px minimum width
 - Minimum 48px touch targets: `min-h-[48px] min-w-[48px]`
 - Dark mode is default (`class="dark"` on `<html>`)
-- Brand colors: teal `#13ecda`, purple `#7c3bed`
+- Brand colors: yellow `#FFD400`, purple `#7c3bed`
 ### GIT  COMMIT
 - Use present tense: "Add user model", not "Added" or "Adds"
 
