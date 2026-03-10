@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     # App
     app_env: str = "development"
     app_debug: bool = True
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003"
 
     @property
     def cors_origins_list(self) -> list[str]:

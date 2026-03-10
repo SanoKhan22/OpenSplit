@@ -24,22 +24,22 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <div className="mb-8 flex items-center gap-3">
-        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-teal to-brand-purple" />
+        <div className="h-12 w-12 rounded-xl bg-brand-yellow" />
         <h1 className="text-4xl font-bold tracking-tight">OpenSplit</h1>
       </div>
-      <p className="mb-10 max-w-sm text-zinc-400">
+      <p className="mb-10 max-w-sm text-text-secondary">
         Split bills effortlessly with friends, roommates, and travel groups.
       </p>
       <div className="flex flex-col gap-4 w-full max-w-xs">
         <Link
           href="/login"
-          className="flex min-h-[48px] items-center justify-center rounded-xl bg-brand-purple px-6 font-semibold text-white transition hover:opacity-90"
+          className="flex min-h-[48px] items-center justify-center rounded-xl bg-brand-yellow px-6 font-semibold text-black transition hover:opacity-90"
         >
           Sign in
         </Link>
         <Link
           href="/signup"
-          className="flex min-h-[48px] items-center justify-center rounded-xl border border-zinc-700 px-6 font-semibold text-zinc-200 transition hover:bg-zinc-800"
+          className="flex min-h-[48px] items-center justify-center rounded-xl border border-border px-6 font-semibold text-text-primary transition hover:bg-bg-secondary"
         >
           Create account
         </Link>

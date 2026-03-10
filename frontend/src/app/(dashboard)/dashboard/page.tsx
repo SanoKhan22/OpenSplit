@@ -94,8 +94,7 @@ export default function DashboardPage() {
         {/* Floating Action Button */}
         <FloatingActionButton
           onClick={() => {
-            // TODO: Open Add Expense modal
-            console.log("Add Expense clicked");
+            window.location.href = "/expenses";
           }}
         />
       </div>
