@@ -39,7 +39,7 @@
 				"-y",
 				"@redis/mcp@latest",
 				"--url",
-				"${input:redis_url}"
+				"redis://localhost:6380"
 			]
 		},
 		"fetch-mcp": {

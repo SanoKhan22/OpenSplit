@@ -88,6 +88,8 @@ formatCents(1250, "USD")  // "$12.50"
 - Minimum 48px touch targets: `min-h-[48px] min-w-[48px]`
 - Dark mode is default (`class="dark"` on `<html>`)
 - Brand colors: teal `#13ecda`, purple `#7c3bed`
+### GIT  COMMIT
+- Use present tense: "Add user model", not "Added" or "Adds"
 
 ---
 
