@@ -5,7 +5,7 @@
 **Created:** March 10, 2026  
 **Design Theme:**
 - **Color Mode:** Dark
-- **Primary Color:** Teal `#13ecda`
+- **Primary Color:** yellow `#FFD400`
 - **Secondary Color:** Purple `#7c3bed`
 - **Font:** Inter
 - **Border Radius:** 12px
@@ -29,7 +29,7 @@ Inspired by **Stripe Dashboard** (professional UX) and **Splitwise** (bill-split
 **Screenshot:** [View Design](https://lh3.googleusercontent.com/aida/AOfcidWKr63Uy953YSdyFcA51-RepeqvXPBqWuu_qasC3bbv7MX71tbqrQnAYez9JSRpeEDE1KHY3yRPlN8j6afdpujo4QkxgYppZUC7LlMl_HA0GBOw-AqI8E0YcZfCsVbd76wJb6F9EAE-GVnHc1KD_zDmzQ6b0myQfztLcXn1gm-wHuoS9FDOdBLgfKrzPa626TcxnXjZKG0rfgQavd2BMymAC6gAST9b6b2oNupxG0peMcvat3zD-0SOsFM)  
 **Features:**
 - Left sidebar navigation (256px)
-- Overview cards: Total Balance (teal), Active Groups, Recent Expenses
+- Overview cards: Total Balance (yellow), Active Groups, Recent Expenses
 - Recent activity list with expense items
 - Floating action button (bottom right)
 
@@ -64,7 +64,7 @@ Inspired by **Stripe Dashboard** (professional UX) and **Splitwise** (bill-split
 **Frontend File:** `frontend/src/app/page.tsx`  
 **Screenshot:** [View Design](https://lh3.googleusercontent.com/aida/AOfcidW7i63aHiHp41c8Kz9-F7Q7pTTs3mRI782VOANUVGblywCs7eIPlVEgt2tlEZ3XUdocPJLTLsnJQGotK-n7SzendD9nSwDnTN-c4auFVsFBf4-H4XOhXfJBds22ZEjMXOhbEC5ChUSwhrJ83spMP65GeeecTB4vRkkNtjUqK09Lvo-sRyuanJDRXOv6gEXpebA1mYn6SokwHMwXH0SHk3wDQTWCGxOwEvV48GnVIhkxXOyHfCfrIfMySw)  
 **Features:**
-- Animated gradient background (teal to purple)
+- Animated gradient background (yellow to purple)
 - Large headline: "Split bills effortlessly with friends"
 - Three CTAs: Create Account, Sign In, Continue as Guest
 - Three feature cards: AI Receipt Scanning, Smart Settlements, Multi-Currency
@@ -169,7 +169,7 @@ className="backdrop-blur-md bg-white/10 border border-white/20"
 // Settlement card structure:
 <SettlementCard>
   <Avatar user={fromUser} />
-  <ArrowIcon className="text-teal-500" />
+  <ArrowIcon className="text-yellow-400" />
   <Avatar user={toUser} />
   <Amount value={amount} />
   <Button variant="primary">Mark as Paid</Button>
@@ -200,7 +200,7 @@ className="backdrop-blur-md bg-white/10 border border-white/20"
 **Implementation Notes:**
 ```tsx
 // Split layout: grid grid-cols-2
-// Focus state: focus:ring-2 focus:ring-teal-500
+// Focus state: focus:ring-2 focus:ring-yellow-400
 // Validation: Show red error text below inputs
 ```
 
@@ -269,7 +269,7 @@ className="backdrop-blur-md bg-white/10 border border-white/20"
 **Features:**
 - Receipt preview on right side
 - "AI Extracting..." progress bar
-- Teal gradient border on upload section
+- Yellow gradient border on upload section
 - Splits auto-updating based on detected total
 
 **Implementation Notes:**
@@ -296,8 +296,8 @@ className="backdrop-blur-md bg-white/10 border border-white/20"
 #### 9.2 404 Minimalist
 **Screenshot:** [View Design](https://lh3.googleusercontent.com/aida/AOfcidWOYQUnyQriNKfHI2F1dNA5in_xTXlG7ySNpt9EOvCQXSGsRsXRgn_V84VWvgGT9ne_dlBl_Q9urRNOIqo3kCY63nLUR23DvFrQnpvzuVTZgC0xoE-4CR3QvN_neRyM8x55Vn0PSi6qWRslmThLEI7PGR06g5Ko8ZH1UJOoPT9E-XDDltyGuQFKNjAfhDoU225trssxKkD4A4-wCKmdGNG26uv7fP3nDiME-DQ8pWwpFjp8C7cWy4jpGA)  
 **Features:**
-- Elegant thin "404" with teal glow
-- Abstract geometric shapes (purple + teal)
+- Elegant thin "404" with yellow glow
+- Abstract geometric shapes (purple + yellow)
 - Single "Return Home" button
 - Minimalist aesthetic
 
@@ -407,13 +407,13 @@ Add these to `frontend/package.json`:
 ```css
 :root {
   /* Brand */
-  --color-teal: #13ecda;
+  --color-yellow: #FFD400;
   --color-purple: #7c3bed;
   
   /* Semantic */
   --color-success: #10b981; /* Green - you're owed */
   --color-danger: #ef4444;  /* Red - you owe */
-  --color-warning: #f59e0b; /* Yellow - pending */
+  --color-warning: #f59e0b; /* Orange - pending */
   
   /* Dark Theme */
   --bg-primary: #0a0a0a;
