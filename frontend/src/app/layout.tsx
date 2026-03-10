@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-zinc-950 text-zinc-50 min-w-[360px]`}>
+      <body className={`${inter.className} min-w-[360px]`}>
         {children}
         <Toaster richColors position="top-center" />
       </body>

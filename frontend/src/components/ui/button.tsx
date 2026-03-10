@@ -2,7 +2,7 @@ import { type ButtonHTMLAttributes, forwardRef } from "react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,10 +12,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-brand-purple text-white hover:opacity-90",
-  secondary: "border border-zinc-700 text-zinc-200 hover:bg-zinc-800",
-  ghost: "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800",
-  danger: "bg-red-600 text-white hover:opacity-90",
+  primary: "bg-brand-yellow text-black hover:opacity-90 font-bold",
+  secondary: "bg-brand-purple text-white hover:opacity-90",
+  outline: "border-2 border-brand-yellow text-brand-yellow hover:bg-brand-yellow/10",
+  ghost: "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary",
+  danger: "bg-danger text-white hover:bg-red-700",
 };
 
 const sizeStyles: Record<Size, string> = {
@@ -35,7 +36,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         className={twMerge(
           clsx(
-            "inline-flex items-center justify-center rounded-xl font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal disabled:opacity-50 disabled:cursor-not-allowed",
+            "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary disabled:opacity-50 disabled:cursor-not-allowed",
             variantStyles[variant],
             sizeStyles[size],
             className,
@@ -68,8 +69,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             {children}
           </span>
         ) : (
-          children
-        )}
+          children)}
       </button>
     );
   },
