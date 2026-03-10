@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Home, Receipt, Users, BarChart3, User, LogOut } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import { logout } from "@/lib/auth";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -62,8 +63,7 @@ export function Sidebar() {
         <button
           className="flex items-center gap-3 px-4 py-3 rounded-xl w-full text-text-secondary hover:bg-bg-tertiary hover:text-danger transition-all duration-200"
           onClick={() => {
-            // TODO: Implement logout
-            console.log("Logout clicked");
+            logout();
           }}
         >
           <LogOut className="w-5 h-5" />
