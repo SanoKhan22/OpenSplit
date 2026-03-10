@@ -26,10 +26,10 @@
 			"args": [
 				"-y",
 				"@supabase/mcp-server-supabase@latest",
-				"--supabase-url",
-				"${input:supabase_url}",
-				"--supabase-service-role-key",
-				"${input:supabase_service_role_key}"
+				"--access-token",
+				"sbp_1a48bdc17af4c6d38d4634b328a6ce80a0bbfa49",
+				"--project-ref",
+				"cvjyorwkcndpiwnpywqu"
 			]
 		},
 		"redis-mcp": {
@@ -50,20 +50,7 @@
 				"@anthropic/mcp-fetch@latest"
 			]
 		},
-		"io.github.github/github-mcp-server": {
-			"type": "stdio",
-			"command": "docker",
-			"args": [
-				"run",
-				"-i",
-				"--rm",
-				"-e",
-				"GITHUB_PERSONAL_ACCESS_TOKEN=${input:token}",
-				"ghcr.io/github/github-mcp-server:0.33.0"
-			],
-			"gallery": "https://api.mcp.github.com",
-			"version": "0.33.0"
-		},
+	
 		"stitch": {
 			"url": "https://stitch.googleapis.com/mcp",
 			"type": "http",
@@ -81,13 +68,8 @@
 			"password": true
 		},
 		{
-			"id": "supabase_url",
-			"description": "Supabase Project URL (e.g. https://xxxx.supabase.co)",
-			"type": "promptString"
-		},
-		{
-			"id": "supabase_service_role_key",
-			"description": "Supabase Service Role Key (from Settings → API)",
+			"id": "supabase_access_token",
+			"description": "Supabase Personal Access Token (from https://supabase.com/dashboard/account/tokens)",
 			"type": "promptString",
 			"password": true
 		},

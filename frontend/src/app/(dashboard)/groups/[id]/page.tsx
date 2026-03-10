@@ -6,10 +6,9 @@ import { ArrowLeft } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { Group, Expense } from "@/types";
 import { formatCents } from "@/types";
-import { use } from "react";
 
-export default function GroupDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function GroupDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
 
   const { data: group, isLoading: loadingGroup } = useSWR(
     `/api/groups/${id}`,

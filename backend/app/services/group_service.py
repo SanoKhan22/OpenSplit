@@ -65,6 +65,29 @@ class GroupService:
         self._assert_member(group_id, user)
         return GroupSchema.model_validate(group)
 
+    def get_members(self, group_id: uuid.UUID, user: UserModel) -> list[dict]:
+        """Get all members of a group with their user details."""
+        self._get_or_404(group_id)
+        self._assert_member(group_id, user)
+        members = self.db.query(GroupMemberModel).filter(
+            GroupMemberModel.group_id == group_id,
+            GroupMemberModel.deleted_at.is_(None),
+        ).all()
+        result = []
+        for m in members:
+            member_user = self.db.query(UserModel).filter(UserModel.id == m.user_id).first()
+            if member_user:
+                result.append({
+                    "id": m.id,
+                    "group_id": m.group_id,
+                    "user_id": m.user_id,
+                    "is_admin": m.is_admin,
+                    "nickname": m.nickname,
+                    "user_display_name": member_user.display_name,
+                    "user_email": member_user.email,
+                })
+        return result
+
     def update(self, group_id: uuid.UUID, payload: GroupUpdateSchema, user: UserModel) -> GroupSchema:
         group = self._get_or_404(group_id)
         member = self._assert_member(group_id, user)

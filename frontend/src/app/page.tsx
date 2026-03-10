@@ -1,6 +1,26 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { loginAsGuest } from "@/lib/auth";
 
 export default function HomePage() {
+  const router = useRouter();
+  const [loadingGuest, setLoadingGuest] = useState(false);
+
+  async function handleGuest() {
+    setLoadingGuest(true);
+    const { error } = await loginAsGuest();
+    if (error) {
+      toast.error(error);
+      setLoadingGuest(false);
+      return;
+    }
+    router.push("/dashboard");
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <div className="mb-8 flex items-center gap-3">
@@ -23,12 +43,13 @@ export default function HomePage() {
         >
           Create account
         </Link>
-        <Link
-          href="/dashboard"
-          className="text-sm text-zinc-500 hover:text-zinc-300 transition"
+        <button
+          onClick={handleGuest}
+          disabled={loadingGuest}
+          className="text-sm text-zinc-500 hover:text-zinc-300 transition disabled:opacity-50"
         >
-          Continue as guest →
-        </Link>
+          {loadingGuest ? "Setting up guest…" : "Continue as guest →"}
+        </button>
       </div>
     </main>
   );

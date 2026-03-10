@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     supabase_url: str
     supabase_service_role_key: str
     supabase_anon_key: str
+    
 
     # Auth
     jwt_secret_key: str
@@ -23,8 +24,8 @@ class Settings(BaseSettings):
     celery_broker_url: str = "redis://localhost:6379/1"
     celery_result_backend: str = "redis://localhost:6379/2"
 
-    # LLM
-    openai_api_key: str
+    # LLM (optional — enable when ready)
+    openai_api_key: str = ""
     openai_model: str = "gpt-4o"
     openai_embedding_model: str = "text-embedding-3-small"
 

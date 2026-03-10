@@ -1,6 +1,7 @@
 import { apiPost } from "@/lib/api";
 
 const TOKEN_KEY = "os_access_token";
+const TOKEN_COOKIE = "os_access_token";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -9,10 +10,13 @@ export function getToken(): string | null {
 
 export function setToken(token: string): void {
   localStorage.setItem(TOKEN_KEY, token);
+  // Also set a cookie so Next.js middleware can verify auth server-side
+  document.cookie = `${TOKEN_COOKIE}=${token}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
 }
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+  document.cookie = `${TOKEN_COOKIE}=; path=/; max-age=0`;
 }
 
 export async function login(

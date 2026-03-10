@@ -72,6 +72,17 @@ async def delete_group(
     return _ok(None, "deleted")
 
 
+@router.get("/{group_id}/members", response_model=dict)
+async def get_members(
+    group_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+) -> dict[str, Any]:
+    service = GroupService(db)
+    result = service.get_members(group_id, current_user)
+    return _ok(result)
+
+
 @router.post("/{group_id}/members/{user_id}", response_model=dict)
 async def add_member(
     group_id: uuid.UUID,
