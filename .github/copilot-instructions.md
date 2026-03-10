@@ -3,6 +3,8 @@
 ## Project Overview
 OpenSplit is a bill-splitting app. Backend: FastAPI + SQLAlchemy + PostgreSQL (Supabase). Frontend: Next.js 14 App Router + TypeScript + Tailwind. AI agents for receipt scanning and RAG-based expense retrieval.
 
+**📐 UI/UX Design System:** See [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) for complete design reference with all 20 Stitch screens, component specs, and frontend implementation guide.
+
 ---
 
 ## Tech Stack
