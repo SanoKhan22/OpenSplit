@@ -12,6 +12,7 @@ export interface Group {
   name: string;
   description: string | null;
   currency: string;
+  invite_code: string;
   created_by_id: string;
   created_at: string;
 }

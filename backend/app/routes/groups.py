@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.dependencies import get_current_user
 from app.models.user import UserModel
-from app.schemas.group import GroupCreateSchema, GroupUpdateSchema, GroupSchema
+from app.schemas.group import GroupCreateSchema, GroupUpdateSchema, GroupSchema, GroupJoinSchema
 from app.services.group_service import GroupService
 
 router = APIRouter()
@@ -93,3 +93,14 @@ async def add_member(
     service = GroupService(db)
     result = service.add_member(group_id, user_id, current_user)
     return _ok(result)
+
+
+@router.post("/join", response_model=dict)
+async def join_group(
+    payload: GroupJoinSchema,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+) -> dict[str, Any]:
+    service = GroupService(db)
+    result = service.join_by_code(payload, current_user)
+    return _ok(result, "joined group")

@@ -1,4 +1,6 @@
 import uuid
+import secrets
+import string
 from datetime import datetime, UTC
 
 from fastapi import HTTPException, status
@@ -6,12 +8,23 @@ from sqlalchemy.orm import Session
 
 from app.models.group import GroupModel, GroupMemberModel
 from app.models.user import UserModel
-from app.schemas.group import GroupCreateSchema, GroupUpdateSchema, GroupSchema, GroupMemberSchema
+from app.schemas.group import GroupCreateSchema, GroupUpdateSchema, GroupSchema, GroupMemberSchema, GroupJoinSchema
 
 
 class GroupService:
     def __init__(self, db: Session) -> None:
         self.db = db
+
+    def _generate_invite_code(self) -> str:
+        """Generate a unique 8-character invite code."""
+        while True:
+            code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
+            existing = self.db.query(GroupModel).filter(
+                GroupModel.invite_code == code,
+                GroupModel.deleted_at.is_(None),
+            ).first()
+            if not existing:
+                return code
 
     def _get_or_404(self, group_id: uuid.UUID) -> GroupModel:
         group = self.db.query(GroupModel).filter(
@@ -37,6 +50,7 @@ class GroupService:
             name=payload.name,
             description=payload.description,
             currency=payload.currency,
+            invite_code=self._generate_invite_code(),
             created_by_id=user.id,
         )
         self.db.add(group)
@@ -124,3 +138,28 @@ class GroupService:
         self.db.commit()
         self.db.refresh(member)
         return GroupMemberSchema.model_validate(member)
+
+    def join_by_code(self, payload: GroupJoinSchema, user: UserModel) -> GroupSchema:
+        """Join a group using an invite code."""
+        group = self.db.query(GroupModel).filter(
+            GroupModel.invite_code == payload.invite_code.upper(),
+            GroupModel.deleted_at.is_(None),
+        ).first()
+        if not group:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid invite code")
+        
+        # Check if already a member
+        existing = self.db.query(GroupMemberModel).filter(
+            GroupMemberModel.group_id == group.id,
+            GroupMemberModel.user_id == user.id,
+            GroupMemberModel.deleted_at.is_(None),
+        ).first()
+        if existing:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Already a member of this group")
+        
+        # Add user as member
+        member = GroupMemberModel(group_id=group.id, user_id=user.id, is_admin=False)
+        self.db.add(member)
+        self.db.commit()
+        self.db.refresh(group)
+        return GroupSchema.model_validate(group)

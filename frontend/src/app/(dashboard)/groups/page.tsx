@@ -9,30 +9,48 @@ import { toast } from "sonner";
 import { apiGet, apiPost } from "@/lib/api";
 import type { Group } from "@/types";
 import Link from "next/link";
-import { PlusCircle, ArrowLeft } from "lucide-react";
+import { PlusCircle, ArrowLeft, UserPlus } from "lucide-react";
 
-const schema = z.object({
+const createSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
   currency: z.string().length(3, "3-letter currency code"),
 });
-type FormValues = z.infer<typeof schema>;
+type CreateFormValues = z.infer<typeof createSchema>;
+
+const joinSchema = z.object({
+  invite_code: z.string().min(8, "Enter 8-character code").max(8),
+});
+type JoinFormValues = z.infer<typeof joinSchema>;
 
 export default function GroupsPage() {
-  const [showForm, setShowForm] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showJoinForm, setShowJoinForm] = useState(false);
   const { data, isLoading, mutate } = useSWR("/api/groups", (url: string) =>
     apiGet<Group[]>(url).then((r) => r.data ?? []),
   );
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } =
-    useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { currency: "USD" } });
+  const { register: registerCreate, handleSubmit: handleSubmitCreate, reset: resetCreate, formState: { errors: errorsCreate, isSubmitting: isSubmittingCreate } } =
+    useForm<CreateFormValues>({ resolver: zodResolver(createSchema), defaultValues: { currency: "USD" } });
 
-  async function onSubmit(values: FormValues) {
+  const { register: registerJoin, handleSubmit: handleSubmitJoin, reset: resetJoin, formState: { errors: errorsJoin, isSubmitting: isSubmittingJoin } } =
+    useForm<JoinFormValues>({ resolver: zodResolver(joinSchema) });
+
+  async function onSubmitCreate(values: CreateFormValues) {
     const res = await apiPost<Group>("/api/groups", values);
     if (res.error) { toast.error(res.error); return; }
     toast.success("Group created!");
-    reset();
-    setShowForm(false);
+    resetCreate();
+    setShowCreateForm(false);
+    mutate();
+  }
+
+  async function onSubmitJoin(values: JoinFormValues) {
+    const res = await apiPost<Group>("/api/groups/join", values);
+    if (res.error) { toast.error(res.error); return; }
+    toast.success("Joined group!");
+    resetJoin();
+    setShowJoinForm(false);
     mutate();
   }
 
@@ -43,28 +61,54 @@ export default function GroupsPage() {
           <ArrowLeft size={20} />
         </Link>
         <h1 className="text-2xl font-bold">Groups</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="ml-auto flex items-center gap-2 min-h-[48px] px-4 rounded-xl bg-brand-purple text-white text-sm font-semibold hover:opacity-90"
-        >
-          <PlusCircle size={16} /> New group
-        </button>
+        <div className="ml-auto flex gap-2">
+          <button
+            onClick={() => { setShowJoinForm(!showJoinForm); setShowCreateForm(false); }}
+            className="flex items-center gap-2 min-h-[48px] px-4 rounded-xl bg-zinc-800 text-white text-sm font-semibold hover:bg-zinc-700"
+          >
+            <UserPlus size={16} /> Join
+          </button>
+          <button
+            onClick={() => { setShowCreateForm(!showCreateForm); setShowJoinForm(false); }}
+            className="flex items-center gap-2 min-h-[48px] px-4 rounded-xl bg-brand-purple text-white text-sm font-semibold hover:opacity-90"
+          >
+            <PlusCircle size={16} /> Create
+          </button>
+        </div>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit(onSubmit)} className="mb-8 p-5 rounded-xl border border-zinc-700 bg-zinc-900 flex flex-col gap-4">
+      {showJoinForm && (
+        <form onSubmit={handleSubmitJoin(onSubmitJoin)} className="mb-8 p-5 rounded-xl border border-zinc-700 bg-zinc-900 flex flex-col gap-4">
+          <h2 className="font-semibold">Join group with code</h2>
+          <div>
+            <input 
+              {...registerJoin("invite_code")} 
+              placeholder="Enter 8-character code" 
+              maxLength={8}
+              className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm font-mono uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-brand-yellow" 
+            />
+            {errorsJoin.invite_code && <p className="mt-1 text-xs text-red-400">{errorsJoin.invite_code.message}</p>}
+          </div>
+          <button type="submit" disabled={isSubmittingJoin} className="min-h-[48px] rounded-xl bg-brand-yellow font-semibold text-black hover:opacity-90 disabled:opacity-50">
+            {isSubmittingJoin ? "Joining…" : "Join group"}
+          </button>
+        </form>
+      )}
+
+      {showCreateForm && (
+        <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="mb-8 p-5 rounded-xl border border-zinc-700 bg-zinc-900 flex flex-col gap-4">
           <h2 className="font-semibold">Create group</h2>
           <div>
-            <input {...register("name")} placeholder="Group name" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal" />
-            {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>}
+            <input {...registerCreate("name")} placeholder="Group name" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal" />
+            {errorsCreate.name && <p className="mt-1 text-xs text-red-400">{errorsCreate.name.message}</p>}
           </div>
-          <input {...register("description")} placeholder="Description (optional)" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal" />
+          <input {...registerCreate("description")} placeholder="Description (optional)" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal" />
           <div>
-            <input {...register("currency")} placeholder="Currency (USD)" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal" />
-            {errors.currency && <p className="mt-1 text-xs text-red-400">{errors.currency.message}</p>}
+            <input {...registerCreate("currency")} placeholder="Currency (USD)" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal" />
+            {errorsCreate.currency && <p className="mt-1 text-xs text-red-400">{errorsCreate.currency.message}</p>}
           </div>
-          <button type="submit" disabled={isSubmitting} className="min-h-[48px] rounded-xl bg-brand-purple font-semibold text-white hover:opacity-90 disabled:opacity-50">
-            {isSubmitting ? "Creating…" : "Create group"}
+          <button type="submit" disabled={isSubmittingCreate} className="min-h-[48px] rounded-xl bg-brand-purple font-semibold text-white hover:opacity-90 disabled:opacity-50">
+            {isSubmittingCreate ? "Creating…" : "Create group"}
           </button>
         </form>
       )}

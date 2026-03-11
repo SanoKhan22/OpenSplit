@@ -20,36 +20,32 @@ export default function DashboardPage() {
     apiGet<Group[]>(url).then((r) => r.data ?? []),
   );
 
-  const [totalBalance, setTotalBalance] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
 
-  // Fetch balances and expenses for all groups
+  // Fetch expenses count for all groups
   useEffect(() => {
-    if (!groups || groups.length === 0) return;
+    if (!groups || groups.length === 0) {
+      setTotalExpenses(0);
+      return;
+    }
 
+    // Fetch expenses count only - simpler and more reliable
     Promise.all(
       groups.map(async (group) => {
-        const [balances, expenses] = await Promise.all([
-          apiGet<any[]>(`/api/settlements/group/${group.id}/balances`).then((r) => r.data ?? []),
-          apiGet<any[]>(`/api/expenses/group/${group.id}`).then((r) => r.data ?? []),
-        ]);
-        return { balances, expenses };
+        try {
+          const expenses = await apiGet<any[]>(`/api/expenses/group/${group.id}`).then((r) => r.data ?? []);
+          return expenses.length;
+        } catch (error) {
+          console.error(`Failed to fetch expenses for group ${group.id}:`, error);
+          return 0;
+        }
       }),
-    ).then((results) => {
-      // Calculate total balance (sum of what you're owed)
-      const balance = results.reduce((sum, { balances }) => {
-        const userBalance = balances.reduce((acc: number, b: any) => {
-          // If amount_cents is negative, you owe; if positive, you're owed
-          return acc + (b.amount_cents || 0);
-        }, 0);
-        return sum + userBalance;
-      }, 0);
-
-      // Count total expenses
-      const expenseCount = results.reduce((sum, { expenses }) => sum + expenses.length, 0);
-
-      setTotalBalance(balance);
-      setTotalExpenses(expenseCount);
+    ).then((counts) => {
+      const total = counts.reduce((sum, count) => sum + count, 0);
+      setTotalExpenses(total);
+    }).catch((err) => {
+      console.error("Error fetching expenses:", err);
+      setTotalExpenses(0);
     });
   }, [groups]);
 
@@ -70,14 +66,9 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatCard
                 title="Total Balance"
-                value={formatCents(Math.abs(totalBalance), groups?.[0]?.currency || "USD")}
+                value={formatCents(0, "USD")}
                 icon={<DollarSign />}
                 color="yellow"
-                trend={
-                  totalBalance !== 0
-                    ? { value: Math.abs(totalBalance), isPositive: totalBalance > 0 }
-                    : undefined
-                }
               />
               <StatCard
                 title="Active Groups"

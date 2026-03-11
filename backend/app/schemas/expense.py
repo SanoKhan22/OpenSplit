@@ -11,6 +11,7 @@ class SplitInputSchema(BaseModel):
 
 class ExpenseCreateSchema(BaseModel):
     group_id: uuid.UUID
+    paid_by_id: uuid.UUID | None = None  # Optional, defaults to current user
     title: str
     amount_cents: int  # Always cents — never floats
     currency: str = "USD"

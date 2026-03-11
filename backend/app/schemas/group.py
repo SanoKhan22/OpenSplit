@@ -15,11 +15,16 @@ class GroupUpdateSchema(BaseModel):
     description: str | None = None
 
 
+class GroupJoinSchema(BaseModel):
+    invite_code: str
+
+
 class GroupSchema(BaseModel):
     id: uuid.UUID
     name: str
     description: str | None
     currency: str
+    invite_code: str
     created_by_id: uuid.UUID
     created_at: datetime
 

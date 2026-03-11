@@ -12,6 +12,7 @@ class GroupModel(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(String(500), nullable=True)
     currency: Mapped[str] = mapped_column(String(3), default="USD", nullable=False)
+    invite_code: Mapped[str] = mapped_column(String(10), unique=True, nullable=False)
     created_by_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )

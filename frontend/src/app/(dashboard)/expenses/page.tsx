@@ -21,6 +21,7 @@ interface GroupMember {
 
 const schema = z.object({
   group_id: z.string().uuid("Select a group"),
+  paid_by_id: z.string().uuid("Select who paid").optional(),
   title: z.string().min(1, "Title required"),
   amount_cents: z.coerce.number().int().positive("Amount must be positive"),
   currency: z.string().length(3),
@@ -55,7 +56,13 @@ export default function ExpensesPage() {
 
   const { fields, append, remove } = useFieldArray({ control, name: "splits" });
   const watchedAmount = watch("amount_cents");
-  const watchedGroupId = watch("group_id");
+
+  // Set paid_by_id to current user when loaded
+  useEffect(() => {
+    if (currentUser) {
+      setValue("paid_by_id", currentUser.id);
+    }
+  }, [currentUser, setValue]);
 
   // Auto-populate splits when group or amount changes
   useEffect(() => {
@@ -135,6 +142,21 @@ export default function ExpensesPage() {
               {groups?.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
             {errors.group_id && <p className="text-xs text-red-400 mt-1">{errors.group_id.message}</p>}
+          </div>
+          <div>
+            <label className="text-sm text-zinc-400 mb-1 block">Paid by</label>
+            <select
+              {...register("paid_by_id")}
+              className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none"
+            >
+              <option value="">Select who paid…</option>
+              {members?.map(m => (
+                <option key={m.user_id} value={m.user_id}>
+                  {m.user_display_name || m.user_email || `User ${m.user_id.slice(0, 8)}`}
+                </option>
+              ))}
+            </select>
+            {errors.paid_by_id && <p className="text-xs text-red-400 mt-1">{errors.paid_by_id.message}</p>}
           </div>
           <div>
             <input {...register("title")} placeholder="Title (e.g. Dinner)" className="w-full min-h-[48px] rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-sm focus:outline-none" />

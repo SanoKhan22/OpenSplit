@@ -26,6 +26,14 @@ class ExpenseService:
     def create(self, payload: ExpenseCreateSchema, user: UserModel) -> ExpenseSchema:
         self._assert_member(payload.group_id, user)
 
+        # Use paid_by_id from payload or default to current user
+        paid_by_id = payload.paid_by_id or user.id
+        
+        # If paid_by_id is specified, verify they're a group member
+        if payload.paid_by_id and payload.paid_by_id != user.id:
+            self._assert_member(payload.group_id, 
+                self.db.query(UserModel).filter(UserModel.id == paid_by_id).first())
+
         total_splits = sum(s.share_cents for s in payload.splits)
         if total_splits != payload.amount_cents:
             raise HTTPException(
@@ -35,7 +43,7 @@ class ExpenseService:
 
         expense = ExpenseModel(
             group_id=payload.group_id,
-            paid_by_id=user.id,
+            paid_by_id=paid_by_id,
             title=payload.title,
             amount_cents=payload.amount_cents,
             currency=payload.currency,
