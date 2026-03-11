@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import Link from "next/link";
-import { ArrowLeft, Copy, Check, Users, UserPlus } from "lucide-react";
+import { Copy, Check, Users, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,11 +69,8 @@ export default function GroupDetailPage({ params }: { params: { id: string } }) 
   }
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/groups" className="min-h-[48px] min-w-[48px] flex items-center justify-center text-zinc-400 hover:text-white">
-          <ArrowLeft size={20} />
-        </Link>
         <div className="flex-1">
           {loadingGroup ? (
             <div className="h-6 w-40 rounded bg-zinc-800 animate-pulse" />

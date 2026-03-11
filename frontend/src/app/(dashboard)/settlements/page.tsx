@@ -2,8 +2,7 @@
 
 import useSWR from "swr";
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
 import { apiGet, apiPost } from "@/lib/api";
 import type { Group, BalanceTransfer } from "@/types";
 import { formatCents } from "@/types";
@@ -34,11 +33,8 @@ export default function SettlementsPage() {
   }
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard" className="min-h-[48px] min-w-[48px] flex items-center justify-center text-zinc-400 hover:text-white">
-          <ArrowLeft size={20} />
-        </Link>
         <h1 className="text-2xl font-bold">Settle up</h1>
       </div>
 

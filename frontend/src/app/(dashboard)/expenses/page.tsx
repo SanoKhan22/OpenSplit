@@ -6,8 +6,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Upload, ArrowLeft, Plus, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { Upload, Plus, Trash2 } from "lucide-react";
 import { apiGet, apiPost } from "@/lib/api";
 import type { Group, Expense, User } from "@/types";
 import { formatCents } from "@/types";
@@ -102,11 +101,8 @@ export default function ExpensesPage() {
   }
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard" className="min-h-[48px] min-w-[48px] flex items-center justify-center text-zinc-400 hover:text-white">
-          <ArrowLeft size={20} />
-        </Link>
         <h1 className="text-2xl font-bold">Expenses</h1>
         <div className="ml-auto flex gap-2">
           <label className="flex items-center gap-2 min-h-[48px] px-3 rounded-xl border border-zinc-700 text-zinc-300 text-sm cursor-pointer hover:bg-zinc-800">

@@ -1,7 +1,6 @@
 "use client";
 
 import { DollarSign, Users, Receipt } from "lucide-react";
-import { DashboardLayout } from "@/components/layout";
 import {
   StatCard,
   FloatingActionButton,
@@ -50,8 +49,7 @@ export default function DashboardPage() {
   }, [groups]);
 
   return (
-    <DashboardLayout>
-      <div className="space-y-8">
+    <div className="space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-text-primary mb-2">Dashboard</h1>
@@ -126,7 +124,6 @@ export default function DashboardPage() {
             window.location.href = "/expenses";
           }}
         />
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

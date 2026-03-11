@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { apiGet, apiPost } from "@/lib/api";
 import type { Group } from "@/types";
 import Link from "next/link";
-import { PlusCircle, ArrowLeft, UserPlus } from "lucide-react";
+import { PlusCircle, UserPlus } from "lucide-react";
 
 const createSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -55,11 +55,8 @@ export default function GroupsPage() {
   }
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto px-6 py-8">
+    <div className="max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard" className="min-h-[48px] min-w-[48px] flex items-center justify-center text-zinc-400 hover:text-white">
-          <ArrowLeft size={20} />
-        </Link>
         <h1 className="text-2xl font-bold">Groups</h1>
         <div className="ml-auto flex gap-2">
           <button
